@@ -131,10 +131,18 @@ class MiniPhotoshop:
 
     # --- FİLTRE FONKSİYONLARI ---
     def apply_brightness_contrast(self, image, brightness=50, contrast=50):
+        # Ayarları ölçekle (-255 ile +255 arası parlaklık, 0.0 ile 2.0 arası kontrast)
         brightness = int((brightness - 50) * 5.1)
         contrast = contrast / 50.0
+
         if brightness != 0 or contrast != 1:
-            image = cv2.convertScaleAbs(image, alpha=contrast, beta=brightness)
+            # ESKİ KOD (Sorunlu): image = cv2.convertScaleAbs(image, alpha=contrast, beta=brightness)
+            
+            # YENİ KOD (Düzeltilmiş):
+            # addWeighted fonksiyonu 0'ın altına düşenleri otomatik 0 yapar, mutlak değer almaz.
+            # Formül: resim * kontrast + 0 + parlaklık
+            image = cv2.addWeighted(image, contrast, np.zeros_like(image), 0, brightness)
+            
         return image
 
     def apply_grayscale(self, image, apply=True):
@@ -356,6 +364,7 @@ class MiniPhotoshop:
         self.update_image()
 
     def reset_settings(self):
+        # Sadece değişkenleri sıfırla (Görsel ayarları değil)
         self.brightness = 50
         self.contrast = 50
         self.blur_intensity = 0
@@ -366,15 +375,8 @@ class MiniPhotoshop:
         self.portrait_blur = 5
         self.face_rec_enabled = 0
 
-        cv2.setTrackbarPos('Parlaklik', self.window_name, 50)
-        cv2.setTrackbarPos('Kontrast', self.window_name, 50)
-        cv2.setTrackbarPos('Bulaniklastirma', self.window_name, 0)
-        cv2.setTrackbarPos('Keskinlestirme', self.window_name, 0)
-        cv2.setTrackbarPos('Gri Tonlama', self.window_name, 0)
-        cv2.setTrackbarPos('Negatif', self.window_name, 0)
-        cv2.setTrackbarPos('Portre Modu', self.window_name, 0)
-        cv2.setTrackbarPos('Portre Bulaniklik', self.window_name, 5)
-        cv2.setTrackbarPos('Yuz Tanima', self.window_name, 0)  # Sıfırlanınca yüz tanımayı da kapat
+        # OpenCV Trackbar komutlarını (cv2.setTrackbarPos) SİLDİK.
+        # Çünkü artık arayüzü PyQt yönetiyor.
 
         self.update_image()
 
