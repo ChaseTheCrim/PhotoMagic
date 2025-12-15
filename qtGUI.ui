@@ -209,6 +209,13 @@
                   </property>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QCheckBox" name="chk_canny">
+                  <property name="text">
+                   <string>Kenar Algılama</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
              </layout>
@@ -234,7 +241,7 @@
            <property name="title">
             <string>AI Modları</string>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>11</x>
@@ -375,9 +382,36 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
+             <widget class="QLabel" name="lbl_cam_status">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: red;
+border-radius: 10px;
+border: 1px solid gray;</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="btn_webcam">
               <property name="text">
-               <string>Webcam Çek</string>
+               <string>Webcam</string>
               </property>
              </widget>
             </item>

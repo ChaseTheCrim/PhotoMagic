@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# ---------------------------------
+# PhotoMagic PROJE OZEL AYARLARI
+# ---------------------------------
+
+# Programin urettigi cikti fotograflari yukleme
+islenmis_foto/
+
+# Yuz veritabani (Arkadaslarinin fotograflari gizli kalsin)
+yuz_veritabani/
+
+# VS Code kisisel ayarlari
+.vscode/
+
+# Eger yanlislikla olustuysa, eski gui dosyalari
+main_gui.py
+yuz_tanima_mini.py
