@@ -26,7 +26,7 @@ class AIProcessor:
         self.frame_counter = 0
 
     def load_known_faces(self):
-        folder = "yuz_veritabani"
+        folder = "FaceDatabase"
         if not os.path.exists(folder):
             os.makedirs(folder)
             return

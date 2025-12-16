@@ -40,7 +40,7 @@ class MiniPhotoshop:
         # --- SİSTEM ---
         self.cap = None
         self.webcam_active = False 
-        self.output_dir = "islenmis_foto"
+        self.output_dir = "Results"
         if not os.path.exists(self.output_dir): os.makedirs(self.output_dir)
         self.prev_time = 0
         self.fps = 0
