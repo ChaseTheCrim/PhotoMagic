@@ -40,6 +40,7 @@ class PhotoshopApp(QMainWindow):
         if hasattr(self, 'chk_canny'): self.chk_canny.stateChanged.connect(self.toggle_canny)
         # Phase 2: Yüz Tanıma Tuşu
         if hasattr(self, 'chk_face_rec'): self.chk_face_rec.stateChanged.connect(self.toggle_face_rec)
+        if hasattr(self, 'chk_age_gender'): self.chk_age_gender.stateChanged.connect(self.toggle_age_gender)
 
         # Butonlar
         if hasattr(self, 'btn_webcam'): self.btn_webcam.clicked.connect(self.toggle_webcam)
@@ -113,6 +114,18 @@ class PhotoshopApp(QMainWindow):
         self.processor.update_image_pipeline()
         if self.mode == "file": self.update_frame()
 
+    def toggle_age_gender(self):
+        # Eğer kutucuk varsa durumunu al (1 veya 0), yoksa 0 yap
+        val = 1 if hasattr(self, 'chk_age_gender') and self.chk_age_gender.isChecked() else 0
+        
+        # Ayarı işlemciye gönder
+        self.processor.settings["age_gender"] = val
+        print(f"DEBUG: Yas/Cinsiyet Modu Degisti -> {val}") # Kontrol için ekrana yazsın
+        
+        # Görüntüyü güncelle
+        self.processor.update_image_pipeline()
+        if self.mode == "file": self.update_frame()
+
     def toggle_portrait(self):
         chk = getattr(self, 'chk_portrait_mode', None) or getattr(self, 'chk_portait_mode', None)
         if chk:
@@ -183,24 +196,45 @@ class PhotoshopApp(QMainWindow):
             self.lbl_status.setText("Hata: Kaydedilemedi! ❌")
 
     def reset_all(self):
+        # 1. Önce tüm sinyalleri durdur (Zincirleme tetiklemeyi önle)
         widgets = [self.slider_brightness, self.slider_contrast, self.slider_blur, 
                    self.slider_sharpness, getattr(self, 'slider_portrait_blur', None)]
         checkboxes = [self.chk_grayscale, self.chk_negative, getattr(self, 'chk_canny', None),
-                      getattr(self, 'chk_face_rec', None), getattr(self, 'chk_portrait_mode', None)]
+                      getattr(self, 'chk_face_rec', None), getattr(self, 'chk_portrait_mode', None),
+                      getattr(self, 'chk_age_gender', None)] # Phase 2 Checkbox'ı da ekledik
         
         for w in widgets + checkboxes:
             if w: w.blockSignals(True)
 
-        if hasattr(self, 'slider_brightness'): self.slider_brightness.setValue(50)
-        if hasattr(self, 'slider_contrast'): self.slider_contrast.setValue(50)
-        if hasattr(self, 'slider_blur'): self.slider_blur.setValue(0)
-        if hasattr(self, 'slider_sharpness'): self.slider_sharpness.setValue(0)
+        # 2. Slider'ları ve SpinBox'ları AYNI ANDA sıfırla
+        if hasattr(self, 'slider_brightness'): 
+            self.slider_brightness.setValue(50)
+            if hasattr(self, 'spin_brightness'): self.spin_brightness.setValue(50)
+
+        if hasattr(self, 'slider_contrast'): 
+            self.slider_contrast.setValue(50)
+            if hasattr(self, 'spin_contrast'): self.spin_contrast.setValue(50)
+
+        if hasattr(self, 'slider_blur'): 
+            self.slider_blur.setValue(0)
+            if hasattr(self, 'spin_blur'): self.spin_blur.setValue(0)
+
+        if hasattr(self, 'slider_sharpness'): 
+            self.slider_sharpness.setValue(0)
+            if hasattr(self, 'spin_sharpness'): self.spin_sharpness.setValue(0)
+            
+        if hasattr(self, 'slider_portrait_blur'):
+            self.slider_portrait_blur.setValue(0)
+            if hasattr(self, 'spin_portrait_blur'): self.spin_portrait_blur.setValue(0)
         
+        # 3. Checkbox'ları temizle
         for chk in checkboxes:
             if chk: chk.setChecked(False)
 
+        # 4. Backend'i sıfırla
         self.processor.reset_settings()
 
+        # 5. Sinyalleri tekrar aç
         for w in widgets + checkboxes:
             if w: w.blockSignals(False)
             
