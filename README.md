@@ -50,3 +50,77 @@ PhotoMagic/
 ├── models/               # Pre-trained .h5 Models (See Releases)
 ├── FaceDatabase/         # Encrypted Face Embeddings Storage
 └── requirements.txt      # Project Dependencies
+```
+## ⚙️ Installation (Kurulum)
+
+### Option A: For Users (Son Kullanıcılar İçin)
+Python veya kodlarla uğraşmanıza gerek yok. Hazır paketlenmiş sürümü kullanabilirsiniz:
+
+1.  Bu sayfanın sağ tarafındaki **[Releases](../../releases)** kısmına gidin.
+2.  En son yayınlanan `PhotoMagic_v1.0_Windows.zip` dosyasını indirin.
+3.  Dosyayı zipten çıkarın.
+4.  Klasör içindeki **`PhotoMagic.exe`** dosyasına çift tıklayın ve çalıştırın.
+
+### Option B: For Developers (Geliştiriciler İçin)
+Kaynak kodlarını incelemek veya katkıda bulunmak isterseniz:
+
+1.  **Repoyu Klonlayın:**
+    ```bash
+    git clone [https://github.com/ChaseTheCrim/PhotoMagic.git](https://github.com/ChaseTheCrim/PhotoMagic.git)
+    cd PhotoMagic
+    ```
+
+2.  **Sanal Ortam Oluşturun (Önerilen):**
+    ```bash
+    python -m venv venv
+    # Windows için:
+    venv\Scripts\activate
+    ```
+
+3.  **Kütüphaneleri Yükleyin:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4.  **Uygulamayı Başlatın:**
+    ```bash
+    python main.py
+    ```
+    *(Not: Kaynak koddan çalıştırırken `models/` klasörünün içinde `.h5` model dosyalarının olduğundan emin olun.)*
+
+---
+
+## 🎮 Usage Guide (Kullanım Kılavuzu)
+
+Uygulama arayüzü 3 ana panelden oluşur:
+
+### 1. Ayarlar Paneli (Settings Panel)
+Görüntü kalitesini anlık olarak ayarlayabilirsiniz:
+* **Parlaklık & Kontrast:** Görüntü ışığını ve renk dengesini optimize eder.
+* **Bulanıklık (Blur):** Görüntüyü yumuşatır (Noise azaltmak için kullanışlıdır).
+* **Keskinlik (Sharpening):** Detayları belirginleştirir.
+
+### 2. AI Modları & Efektler
+* **✅ Yüz İskeleti:** 468 noktalı yüz ağını (mesh) gerçek zamanlı çizer.
+* **✅ Yüz Tanıma:** Veritabanındaki kayıtlı kişileri (Ahmet, Ayşe vb.) tanır.
+* **✅ Yaş ve Cinsiyet:** Tahmini yaş ve cinsiyet bilgisini yüzün yanına yazar.
+* **🎨 Efektler:** Gri Tonlama, Negatif ve Kenar Algılama gibi filtreleri uygular.
+
+### 3. Kontrol Butonları
+* **Webcam:** Kamerayı başlatır.
+* **Yükle:** Bilgisayardan statik bir fotoğraf yükleyerek analiz yapmanızı sağlar.
+* **Kaydet:**
+    * *Normal Mod:* Ekran görüntüsünü `Results/` klasörüne kaydeder.
+    * *İskelet Modu:* Kişiyi **Yüz Veritabanına (FaceDatabase)** kaydetmek için kayıt penceresini açar.
+* **Sıfırla:** Tüm ayarları ve efektleri varsayılan hale getirir.
+
+---
+
+## 📄 License & Copyright
+
+**PhotoMagic** is developed by the **PhotoSynth Team**.
+Distributed under the **MIT License**.
+
+Bu proje açık kaynaklıdır ve eğitim/portföy amaçlı geliştirilmiştir. Ticari kullanım için lisans dosyasını inceleyiniz.
+
+Copyright © 2026 PhotoSynth Team. All Rights Reserved.
