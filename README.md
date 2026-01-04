@@ -126,7 +126,7 @@ This project was brought to life by the collaborative efforts of our dedicated t
 * **Umut Barbaros Babahan** - *Backend Developer, AI Researcher & Model Trainer* 
     * [![GitHub](https://img.shields.io/badge/GitHub-BarbarosUmut-181717?style=flat&logo=github)](https://github.com/BarbarosUmut)
 
-* **Oğuzhan Aytekin** - *Backend Developer & AI Researcher*
+* **Oğuzhan Aytekin** - *Backend Developer & AI Researcher* 
     * [![GitHub](https://img.shields.io/badge/GitHub-oguzhanaytkn-181717?style=flat&logo=github)](https://github.com/oguzhanaytkn)
 
 * **Emiralp Boyunaga** - *Human Resources & Team Assistant*
