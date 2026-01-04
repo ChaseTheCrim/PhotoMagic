@@ -1,6 +1,7 @@
 # PhotoMagic (v1.0.0)
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python&logoColor=white)
+![Backend](https://img.shields.io/badge/Backend-C%2B%2B%20Optimized-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 ![Framework](https://img.shields.io/badge/GUI-PySide6-41CD52?style=for-the-badge&logo=qt&logoColor=white)
 ![AI Engine](https://img.shields.io/badge/AI-TensorFlow%20%7C%20OpenCV-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
