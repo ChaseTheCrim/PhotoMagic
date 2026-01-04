@@ -122,7 +122,7 @@ This project was brought to life by the collaborative efforts of our dedicated t
 * **Ömer Faruk Ünal** (ChaseTheCrim) - *Lead Developer & GUI/System Architect*
     * [![GitHub](https://img.shields.io/badge/GitHub-ChaseTheCrim-181717?style=flat&logo=github)](https://github.com/ChaseTheCrim)
 
-* **Umut Barbaros** - *Backend Developer, AI Researcher & Model Trainer*
+* **Umut Barbaros Babahan** - *Backend Developer, AI Researcher & Model Trainer*
     * [![GitHub](https://img.shields.io/badge/GitHub-BarbarosUmut-181717?style=flat&logo=github)](https://github.com/BarbarosUmut)
 
 * **Oğuzhan Aytekin** - *Backend Developer & AI Researcher*
