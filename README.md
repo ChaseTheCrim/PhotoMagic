@@ -1,4 +1,4 @@
-# 📸 PhotoMagic AI (v1.0)
+# PhotoMagic (v1.0.0)
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
