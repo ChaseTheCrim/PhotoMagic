@@ -3,41 +3,33 @@ import numpy as np
 import mediapipe as mp
 import os
 import time
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
-# MODÜLER YAPI: Yapay Zeka Uzmanını Çağırıyoruz
+# Yapay Zeka Modülünü Al
 from AI_Core import AIProcessor
 
 class MiniPhotoshop:
     def __init__(self):
-        # --- MEDIAPIPE (Arka Plan Silme için) ---
         self.mp_selfie_segmentation = mp.solutions.selfie_segmentation
         self.selfie_segmentation = self.mp_selfie_segmentation.SelfieSegmentation(model_selection=1)
 
-        # --- YAPAY ZEKA MODÜLÜ ---
-        self.ai_engine = AIProcessor() # AI işlerini bu arkadaş yapacak
+        self.ai_engine = AIProcessor() 
 
-        # --- GÖRÜNTÜ DEĞİŞKENLERİ ---
         self.full_res_image = None   
         self.proxy_image = None      
         self.processed_image = None  
         self.captured_image = None   
 
-        # --- AYARLAR ---
         self.settings = {
-            "brightness": 50,
-            "contrast": 50,
-            "blur": 0,
-            "sharpen": 0,
-            "grayscale": 0,
-            "negative": 0,
-            "portrait_mode": 0,
-            "portrait_blur": 5,
+            "brightness": 50, "contrast": 50, "blur": 0, "sharpen": 0,
+            "grayscale": 0, "negative": 0, "portrait_mode": 0, "portrait_blur": 5,
             "canny_edge": 0,
-            "face_rec": 0,      # Modüler AI tetikleyicisi
-            "age_gender": 0     # Modüler AI tetikleyicisi
+            "face_rec": 0,
+            "age_gender": 0,
+            "skeleton": 0
         }
 
-        # --- SİSTEM ---
         self.cap = None
         self.webcam_active = False 
         self.output_dir = "Results"
@@ -54,7 +46,6 @@ class MiniPhotoshop:
         dim = (width, int(h * r))
         return cv2.resize(image, dim, interpolation=cv2.INTER_AREA)
 
-    # --- DOSYA YÖNETİMİ ---
     def load_image(self, image_path):
         try:
             file_stream = np.fromfile(image_path, dtype=np.uint8)
@@ -65,10 +56,7 @@ class MiniPhotoshop:
 
         if image is None: return False
         self.stop_webcam()
-        
-        # [ÖNEMLİ] Yeni fotoğraf geldi, eski AI hafızasını sil!
         self.ai_engine.reset_cache()
-        
         self.full_res_image = image
         self.proxy_image = self.resize_image(image, width=1024)
         self.update_image_pipeline()
@@ -101,12 +89,11 @@ class MiniPhotoshop:
             return True
         return False
 
-    # --- FİLTRE MOTORU (ANA PİPELİNE) ---
     def process_image(self, img_input):
         if img_input is None: return None
         img = img_input.copy()
 
-        # 1. TEMEL EFEKTLER (Canny, Parlaklık vs.)
+        # 1. Efektler
         if self.settings["canny_edge"]:
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             edges = cv2.Canny(gray, 100, 200)
@@ -126,11 +113,9 @@ class MiniPhotoshop:
             blurred = cv2.GaussianBlur(img, (0, 0), 3)
             img = cv2.addWeighted(img, 1.0 + strength, blurred, -strength, 0)
 
-        # 2. PORTRE MODU
         if self.settings["portrait_mode"]:
             img = self.apply_portrait_mode(img, self.settings["portrait_blur"])
 
-        # 3. RENK FİLTRELERİ
         if self.settings["grayscale"]:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             if self.settings["negative"]: img = cv2.bitwise_not(img)
@@ -138,14 +123,13 @@ class MiniPhotoshop:
         elif self.settings["negative"]:
             img = cv2.bitwise_not(img)
             
-        # 4. YAPAY ZEKA (MODÜLER ÇAĞRI) 🧠
-        # Artık tüm karmaşık işlemler ai_core içinde yapılıyor.
-        # Biz sadece "yap" diyoruz.
-        if self.settings["face_rec"] or self.settings["age_gender"]:
+        # 2. Yapay Zeka İşlemleri
+        if self.settings["face_rec"] or self.settings["age_gender"] or self.settings["skeleton"]:
             img = self.ai_engine.process_frame(
                 img, 
                 enable_face_rec=self.settings["face_rec"],
-                enable_age_gender=self.settings["age_gender"]
+                enable_age_gender=self.settings["age_gender"],
+                enable_skeleton=self.settings["skeleton"]
             )
 
         return img
@@ -170,20 +154,60 @@ class MiniPhotoshop:
             self.fps = 1 / ((cur_time - self.prev_time) + 1e-6)
             self.prev_time = cur_time
 
-    def save_image(self):
-        if not self.webcam_active and self.full_res_image is not None:
-            final_img = self.process_image(self.full_res_image)
-        else:
-            final_img = self.processed_image
+    def generate_unique_filename(self, directory, base_name, extension=".jpg"):
+        counter = 1
+        filename = f"{base_name}{extension}"
+        full_path = os.path.join(directory, filename)
+        while os.path.exists(full_path):
+            filename = f"{base_name}_{counter}{extension}"
+            full_path = os.path.join(directory, filename)
+            counter += 1
+        return full_path
 
-        if final_img is not None:
-            ts = time.strftime("%Y%m%d_%H%M%S")
-            filename = f"foto_{ts}.jpg"
-            path = os.path.join(self.output_dir, filename)
-            cv2.imwrite(path, final_img)
-            print(f"Kaydedildi: {path}")
-            return True
-        return False
+    # Yüz iskeleti modu açıkken akıllı kayıt mekanizması
+    def save_image_smart(self):
+        s = self.settings
+        is_skeleton_on = s.get("skeleton", 0)
+        
+        # Kirletici efekt kontrolü
+        has_polluting_effects = (
+            s.get("blur", 0) > 0 or s.get("sharpen", 0) > 0 or 
+            s.get("grayscale", 0) == 1 or s.get("negative", 0) == 1 or 
+            s.get("portrait_mode", 0) == 1 or
+            s.get("face_rec", 0) == 1 or s.get("age_gender", 0) == 1
+        )
+
+        # Kontrol 1: Veritabanına Temiz Kayıt
+        if is_skeleton_on and not has_polluting_effects:
+            root = tk.Tk()
+            root.withdraw()
+            file_path = filedialog.asksaveasfilename(
+                initialdir=self.ai_engine.db_dir,
+                title="Yeni Kişi Olarak Kaydet (İsim Giriniz)",
+                filetypes=[("JPG", "*.jpg")], defaultextension=".jpg"
+            )
+            root.destroy()
+
+            if file_path:
+                directory = os.path.dirname(file_path)
+                base_name = os.path.splitext(os.path.basename(file_path))[0]
+                final_path = self.generate_unique_filename(directory, base_name)
+                
+                # Temizlenmiş resmi kaydet
+                image_to_save = self.full_res_image if self.full_res_image is not None else self.processed_image
+                # Dosya modundaysa BGR'ye çevir (OpenCV standardı)
+                # Not:Capture ettiysek zaten BGR'dir, o yüzden direkt kaydedilebilir.
+                cv2.imwrite(final_path, image_to_save)
+                
+                self.ai_engine.load_known_faces() # Hafızayı yenile
+                return "database", final_path
+
+        # SENARYO B: Results'a Normal Kayıt
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        filename = f"foto_{ts}.jpg"
+        path = os.path.join(self.output_dir, filename)
+        cv2.imwrite(path, self.processed_image) # İşlenmişi kaydet
+        return "results", path
 
     def reset_settings(self):
         for key in self.settings:

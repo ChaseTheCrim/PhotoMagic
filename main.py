@@ -1,6 +1,7 @@
 import sys
 import cv2
 import time
+from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QWidget
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtCore import QTimer, Qt, QFile
@@ -41,6 +42,7 @@ class PhotoshopApp(QMainWindow):
         # Phase 2: Yüz Tanıma Tuşu
         if hasattr(self, 'chk_face_rec'): self.chk_face_rec.stateChanged.connect(self.toggle_face_rec)
         if hasattr(self, 'chk_age_gender'): self.chk_age_gender.stateChanged.connect(self.toggle_age_gender)
+        if hasattr(self, 'chk_skeleton'): self.chk_skeleton.stateChanged.connect(self.toggle_skeleton)
 
         # Butonlar
         if hasattr(self, 'btn_webcam'): self.btn_webcam.clicked.connect(self.toggle_webcam)
@@ -50,6 +52,21 @@ class PhotoshopApp(QMainWindow):
             
         if hasattr(self, 'btn_save'): self.btn_save.clicked.connect(self.save_snapshot)
         if hasattr(self, 'btn_reset'): self.btn_reset.clicked.connect(self.reset_all)
+
+        # UI Elemanlarını Tanımla
+        if hasattr(self, 'lbl_status'):
+            self.lbl_status.setText("Durum: Hazır")
+            self.lbl_status.setStyleSheet("color: white; font-size: 11px;") 
+            
+            # --- KESİN ÇÖZÜM AYARLARI ---
+            self.lbl_status.setFixedWidth(200)   # Genişliği 200'e çektik (Çok güvenli)
+            self.lbl_status.setFixedHeight(45)   # Yükseklik sabit
+            self.lbl_status.setAlignment(Qt.AlignCenter)
+            self.lbl_status.setWordWrap(True)
+            
+            # Bu satır etiketin içeriğe göre esnemesini YASAKLAR:
+            self.lbl_status.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+            # ----------------------------
 
         # Timer
         self.timer = QTimer()
@@ -107,6 +124,12 @@ class PhotoshopApp(QMainWindow):
         self.processor.settings["canny_edge"] = val
         self.processor.update_image_pipeline()
         if self.mode == "file": self.update_frame()
+
+    def toggle_skeleton(self):
+        val = 1 if hasattr(self, 'chk_skeleton') and self.chk_skeleton.isChecked() else 0
+        self.processor.settings["skeleton"] = val
+        self.processor.update_image_pipeline()
+        if self.mode == "file": self.update_frame()
         
     def toggle_face_rec(self):
         val = 1 if self.chk_face_rec.isChecked() else 0
@@ -120,7 +143,6 @@ class PhotoshopApp(QMainWindow):
         
         # Ayarı işlemciye gönder
         self.processor.settings["age_gender"] = val
-        print(f"DEBUG: Yas/Cinsiyet Modu Degisti -> {val}") # Kontrol için ekrana yazsın
         
         # Görüntüyü güncelle
         self.processor.update_image_pipeline()
@@ -190,10 +212,14 @@ class PhotoshopApp(QMainWindow):
 
     def save_snapshot(self):
         self.processor.capture_current_frame()
-        if self.processor.save_image():
-            self.lbl_status.setText("Durum: Kaydedildi (Yüksek Kalite) ✅")
+        result_type, path = self.processor.save_image_smart()
+        
+        if result_type == "database":
+            self.lbl_status.setText(f"Kişi Veritabanına Eklendi: {path.split('/')[-1]} ✅")
+            self.lbl_status.setStyleSheet("color: #00ff00;")
         else:
-            self.lbl_status.setText("Hata: Kaydedilemedi! ❌")
+            self.lbl_status.setText(f"Fotoğraf Kaydedildi: {path.split('/')[-1]}")
+            self.lbl_status.setStyleSheet("color: orange;")
 
     def reset_all(self):
         # 1. Önce tüm sinyalleri durdur (Zincirleme tetiklemeyi önle)

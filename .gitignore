@@ -223,3 +223,21 @@ yuz_veritabani/
 # Eger yanlislikla olustuysa, eski gui dosyalari
 main_gui.py
 yuz_tanima_mini.py
+
+# ---------------------------------
+# PhotoMagic PROJE OZEL AYARLARI (GÜNCEL)
+# ---------------------------------
+
+# 1. Devasa Modeller (GitHub'a gitmesin, Release zip'inde var)
+models/
+
+# 2. Kullanıcı Verileri (Gizlilik)
+FaceDatabase/
+Results/
+
+# 3. Gereksiz Dosyalar
+islenmis_foto/
+yuz_veritabani/
+.vscode/
+main_gui.py
+yuz_tanima_mini.py
