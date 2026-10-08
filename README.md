@@ -7,7 +7,7 @@
 ![AI Engine](https://img.shields.io/badge/AI-TensorFlow%20%7C%20OpenCV-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
 ![License](https://img.shields.io/github/license/ChaseTheCrim/PhotoMagic?style=for-the-badge)
 
-**PhotoMagic** is a production-ready desktop biometric analysis tool developed by the **PhotoSynth Team**. It features a **Hybrid AI Architecture** capable of real-time Age, Gender, Emotion recognition, and Face Skeleton tracking, wrapped in a modern PySide6 interface.
+**PhotoMagic** is a production-ready desktop biometric analysis tool developed by the **PhotoSynth Team**. It features a **Hybrid AI Architecture** capable of real-time Age, Gender, Emotion recognition, and Face Skeleton tracking, wrapped in a modern PySide6 interface. 
 
 ---
 
